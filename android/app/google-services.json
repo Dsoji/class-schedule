@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "411443102331",
+    "project_id": "classschedule-15d61",
+    "storage_bucket": "classschedule-15d61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411443102331:android:14f0933fca75fd144c58de",
+        "android_client_info": {
+          "package_name": "com.example.scheduler"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSs7pvezI7uWu-nmyh9vQstwYfiFIw7aU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
