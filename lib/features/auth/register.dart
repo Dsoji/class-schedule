@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/widgets/erro_widget.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
 import 'package:scheduler/features/auth/login.dart';
 
@@ -467,53 +468,12 @@ class _RegisterState extends State<Register> {
                           onChanged: (value) {},
                         ),
                         const Gap(16),
-                        // TextFormField(
-                        //   obscureText: _isObscure2,
-                        //   controller: confirmpassController,
-                        //   decoration: InputDecoration(
-                        //     suffixIcon: IconButton(
-                        //         icon: Icon(_isObscure2
-                        //             ? Icons.visibility_off
-                        //             : Icons.visibility),
-                        //         onPressed: () {
-                        //           setState(() {
-                        //             _isObscure2 = !_isObscure2;
-                        //           });
-                        //         }),
-                        //     filled: true,
-                        //     fillColor: Colors.white,
-                        //     hintText: 'Confirm Password',
-                        //     enabled: true,
-                        //     contentPadding: const EdgeInsets.only(
-                        //         left: 14.0, bottom: 8.0, top: 15.0),
-                        //     focusedBorder: OutlineInputBorder(
-                        //       borderSide: const BorderSide(color: Colors.white),
-                        //       borderRadius: BorderRadius.circular(20),
-                        //     ),
-                        //     enabledBorder: UnderlineInputBorder(
-                        //       borderSide: const BorderSide(color: Colors.white),
-                        //       borderRadius: BorderRadius.circular(20),
-                        //     ),
-                        //   ),
-                        //   validator: (value) {
-                        //     if (confirmpassController.text !=
-                        //         passwordController.text) {
-                        //       return "Password did not match";
-                        //     } else {
-                        //       return null;
-                        //     }
-                        //   },
-                        //   onChanged: (value) {},
-                        // ),
-                        // const SizedBox(
-                        //   height: 20,
-                        // ),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              "Rool : ",
+                              "Role : ",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -613,61 +573,6 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                         const Gap(8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0))),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                const CircularProgressIndicator();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginPage(),
-                                  ),
-                                );
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0))),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                setState(() {
-                                  showProgress = true;
-                                });
-                                signUp(
-                                    emailController.text,
-                                    passwordController.text,
-                                    rool,
-                                    level,
-                                    dept,
-                                    nameController.text);
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Register",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -682,13 +587,24 @@ class _RegisterState extends State<Register> {
 
   void signUp(String email, String password, String rool, String level,
       String dept, String name) async {
-    const CircularProgressIndicator();
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: const CircularProgressIndicator(
+          color: Colors.blue,
+        ),
+      ),
+    );
+
     if (_formkey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) =>
-              {postDetailsToFirestore(email, rool, level, dept, name)})
-          .catchError((e) {});
+      try {
+        Set userCredential = await _auth
+            .createUserWithEmailAndPassword(email: email, password: password)
+            .then((value) =>
+                {postDetailsToFirestore(email, rool, level, dept, name)});
+      } on FirebaseAuthException catch (e) {
+        displayMessage(e.code, context);
+      }
     }
   }
 

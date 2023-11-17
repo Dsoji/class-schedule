@@ -6,12 +6,14 @@ class UserRoleProvider with ChangeNotifier {
   String _userEmail = '';
   String _userLevel = '';
   String _userDept = '';
+  String _userId = '';
 
   String get userRole => _userRole;
   String get userName => _userName;
   String get userEmail => _userEmail;
   String get userLevel => _userLevel;
   String get userDept => _userDept;
+  String get userId => _userId;
 
   void setUserDetails({
     required String role,
@@ -19,12 +21,14 @@ class UserRoleProvider with ChangeNotifier {
     required String email,
     required String level,
     required String dept,
+    required String docId,
   }) {
     _userRole = role;
     _userName = name;
     _userEmail = email;
     _userLevel = level;
     _userDept = dept;
+    _userId = docId;
     notifyListeners();
   }
 
@@ -34,6 +38,7 @@ class UserRoleProvider with ChangeNotifier {
     _userEmail = '';
     _userLevel = '';
     _userDept = '';
+    _userId = '';
     notifyListeners();
   }
 }

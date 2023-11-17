@@ -3,8 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/model/usermodel.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:scheduler/service/upload_assgnment.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -14,30 +18,42 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  final emailController = TextEditingController();
+  final UpdateProfiletService firestoreService = UpdateProfiletService();
   final nameController = TextEditingController();
 
   @override
   void dispose() {
-    emailController.dispose();
     nameController.dispose();
     super.dispose();
   }
 
   // Initial Selected Value
-  String dropdownvalue = 'Item 1';
+  var _levelItemSelected = "100";
+  var _deptItemSelected = "CVE";
 
+  var level = "Level";
+  var dept = "Department";
   // List of items in our dropdown menu
-  var items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
+  var levels = [
+    "100",
+    "200",
+    "300",
+    "400",
+    "500",
+  ];
+  var depts = [
+    'CVE',
+    'EEE',
+    'MEE',
+    'AGE',
+    'MME',
+    'MNE',
+    'IPE',
   ];
 
   @override
   Widget build(BuildContext context) {
+    String userId = Provider.of<UserRoleProvider>(context).userId;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -91,160 +107,152 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ),
                 const Gap(6),
-                ReusedField(
-                  height: 38,
-                  width: double.infinity,
-                  controller: emailController,
-                  color: Colors.black,
-                  autofocus: true,
-                ),
-                const Gap(12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Email Address',
-                    style:
-                        AppTextStyles.regular12.copyWith(color: Colors.black),
-                  ),
-                ),
-                const Gap(6),
-                ReusedField(
-                  height: 38,
-                  width: double.infinity,
+                FormBuilderTextField(
+                  name: 'Name',
                   controller: nameController,
-                  color: Colors.black,
-                  autofocus: true,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.length == 0) {
+                      return "Name cannot be empty";
+                    } else {
+                      return null;
+                    }
+                  },
+                  onSaved: (value) {
+                    nameController.text = value!;
+                  },
                 ),
                 const Gap(12),
-                Row(
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Faculty',
-                            style: AppTextStyles.regular12
-                                .copyWith(color: Colors.black),
-                          ),
+                const Gap(12),
+                Row(children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Level',
+                          style: AppTextStyles.regular12
+                              .copyWith(color: Colors.black),
                         ),
-                        DropdownTile(
-                          child: DropdownButton(
-                            isExpanded: false,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey, width: 1.0),
+                        ),
+                        width: 200,
+                        height: 60,
+                        child: Center(
+                          child: DropdownButton<String>(
+                            dropdownColor: Colors.white,
                             isDense: true,
-                            // Initial Value
-                            value: dropdownvalue,
-
-                            // Down Arrow Icon
-                            icon: const Icon(Icons.keyboard_arrow_down),
-
-                            // Array list of items
-                            items: items.map((String items) {
-                              return DropdownMenuItem(
-                                value: items,
-                                child: Text(items),
+                            isExpanded: false,
+                            iconEnabledColor: Colors.black,
+                            focusColor: Colors.white,
+                            items: levels.map((String dropDownStringItem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownStringItem,
+                                child: Text(
+                                  dropDownStringItem,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
                               );
                             }).toList(),
-                            // After selecting the desired option,it will
-                            // change button value to selected value
-                            onChanged: (String? newValue) {
+                            onChanged: (newValueSelected) {
                               setState(() {
-                                dropdownvalue = newValue!;
+                                _levelItemSelected = newValueSelected!;
+                                level = newValueSelected;
                               });
                             },
+                            value: _levelItemSelected,
                           ),
                         ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Department',
-                            style: AppTextStyles.regular12
-                                .copyWith(color: Colors.black),
-                          ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Department',
+                          style: AppTextStyles.regular12
+                              .copyWith(color: Colors.black),
                         ),
-                        DropdownTile(
-                          child: DropdownButton(
-                            // Initial Value
-                            value: dropdownvalue,
-
-                            // Down Arrow Icon
-                            icon: const Icon(Icons.keyboard_arrow_down),
-
-                            // Array list of items
-                            items: items.map((String items) {
-                              return DropdownMenuItem(
-                                value: items,
-                                child: Text(items),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey, width: 1.0),
+                        ),
+                        width: 200,
+                        height: 60,
+                        child: Center(
+                          child: DropdownButton<String>(
+                            dropdownColor: Colors.white,
+                            isDense: true,
+                            isExpanded: false,
+                            iconEnabledColor: Colors.black,
+                            focusColor: Colors.white,
+                            items: depts.map((String dropDownStringItem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownStringItem,
+                                child: Text(
+                                  dropDownStringItem,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
                               );
                             }).toList(),
-                            // After selecting the desired option,it will
-                            // change button value to selected value
-                            onChanged: (String? newValue) {
+                            onChanged: (newValueSelected) {
                               setState(() {
-                                dropdownvalue = newValue!;
+                                _deptItemSelected = newValueSelected!;
+                                dept = newValueSelected;
                               });
                             },
+                            value: _deptItemSelected,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Department',
-                    style:
-                        AppTextStyles.regular12.copyWith(color: Colors.black),
+                      ),
+                    ],
                   ),
-                ),
-                DropdownTile(
-                  child: DropdownButton(
-                    // Initial Value
-                    value: dropdownvalue,
-
-                    // Down Arrow Icon
-                    icon: const Icon(Icons.keyboard_arrow_down),
-
-                    // Array list of items
-                    items: items.map((String items) {
-                      return DropdownMenuItem(
-                        value: items,
-                        child: Text(items),
-                      );
-                    }).toList(),
-                    // After selecting the desired option,it will
-                    // change button value to selected value
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownvalue = newValue!;
-                      });
-                    },
-                  ),
-                ),
+                ]),
                 const Gap(38),
                 Center(
                   child: FullButton(
                     color: ColorStyles.primaryBlue,
                     height: 48,
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const BottomNavBar(),
-                      //   ),
-                      // );
+                      firestoreService.updateDetails(
+                        userId,
+                        level,
+                        dept,
+                        nameController.text,
+                      );
+
+                      //clear the text controller
+                      nameController.clear();
+//                   //close boxx
+                      Navigator.pop(context);
                     },
                     text: 'Save',
                     width: 343,

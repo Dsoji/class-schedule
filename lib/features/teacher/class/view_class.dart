@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/model/usermodel.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
 import 'package:scheduler/features/teacher/class/add_class.dart';
 import 'package:scheduler/features/teacher/class/edit_class.dart';
@@ -20,6 +22,7 @@ class ViewClass extends StatefulWidget {
 class _ViewClassState extends State<ViewClass> {
   @override
   Widget build(BuildContext context) {
+    String userDept = Provider.of<UserRoleProvider>(context).userDept;
     final AddClassService firestoreService = AddClassService();
     return Scaffold(
         appBar: AppBar(
@@ -122,7 +125,9 @@ class _ViewClassState extends State<ViewClass> {
               SizedBox(
                 height: 550,
                 child: StreamBuilder<QuerySnapshot>(
-                    stream: firestoreService.getClassStream(),
+                    stream: firestoreService.getClassStream(
+                      userDept,
+                    ),
                     builder: (context, snapshot) {
                       //logic t get notes
                       if (snapshot.hasData) {

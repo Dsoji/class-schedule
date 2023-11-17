@@ -1,11 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduler/core/model/usermodel.dart';
 import 'package:scheduler/features/timetable/model/time_table.dart';
 import 'package:scheduler/features/timetable/widget/number_widget.dart';
 import 'package:scheduler/features/timetable/widget/time_widget.dart';
+import 'package:scheduler/service/firestore.dart';
 
 import '../../../core/const/const_barrel.dart';
 
@@ -17,8 +22,13 @@ class SecondSemester extends StatefulWidget {
 }
 
 class _SecondSemesterState extends State<SecondSemester> {
+  final TimetableService firestoreService = TimetableService();
+  DateTime selectedDate = DateTime.now();
+  List<Map<String, dynamic>> dataList = [];
+
   @override
   Widget build(BuildContext context) {
+    String userDept = Provider.of<UserRoleProvider>(context).userDept;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -52,21 +62,82 @@ class _SecondSemesterState extends State<SecondSemester> {
         child: Column(
           children: [
             const Gap(20),
-            _addWeekList(),
-            const Gap(20),
-            Expanded(
-              child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: timeTable.length,
-                  itemBuilder: (context, index) {
-                    return TimeWidget(
-                      course: timeTable[index].course,
-                      location: timeTable[index].location,
-                      date: timeTable[index].date,
-                      time: timeTable[index].time,
-                    );
-                  }),
+            DatePicker(
+              DateTime.now(),
+              width: 60,
+              height: 80,
+              controller: DatePickerController(),
+              initialSelectedDate: DateTime.now(),
+              selectionColor: Colors.blue,
+              selectedTextColor: Colors.white,
+              onDateChange: (date) {
+                setState(() {
+                  // _selectedDate = date;
+                });
+                // fetchDataFromFirebase(date);
+              },
             ),
+            const Gap(20),
+            SizedBox(
+              height: 550,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: firestoreService.getTtStream(userDept),
+                builder: (context, snapshot) {
+                  //logic t get notes
+                  if (snapshot.hasData) {
+                    List notesList = snapshot.data!.docs;
+                    //display as list
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: notesList.length,
+                      itemBuilder: (context, index) {
+                        //get each indv doc
+                        DocumentSnapshot document = notesList[index];
+                        String docID = document.id;
+
+                        //get note from each doc
+                        Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
+                        String titleText = data['code'];
+                        String dateTime = data['dateTime'];
+                        String location = data['location'];
+                        // String unitText = data['unit'];
+                        // String detText = data['details'];
+
+                        //display as list tile
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: ListTile(
+                            leading: Text(titleText),
+                            subtitle: Text(location),
+                            title: Text(dateTime),
+                            trailing: Icon(Icons.download, color: Colors.grey),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  // if there exist to be no data
+                  else {
+                    return const Text("nothing to show here");
+                  }
+                },
+              ),
+            ),
+
+            // Expanded(
+            //   child: ListView.builder(
+            //       scrollDirection: Axis.vertical,
+            //       itemCount: timeTable.length,
+            //       itemBuilder: (context, index) {
+            //         return TimeWidget(
+            //           course: timeTable[index].course,
+            //           location: timeTable[index].location,
+            //           date: timeTable[index].date,
+            //           time: timeTable[index].time,
+            //         );
+            //       }),
+            // ),
           ],
         ),
       ),

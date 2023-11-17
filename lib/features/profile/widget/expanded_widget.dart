@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/features/bottomNavigation/bottom_pages_brrel.dart';
 
 import '../../../core/widgets/widget_barrel.dart';
 
 class ExpandWidget extends StatelessWidget {
   final String course;
-  const ExpandWidget({super.key, required this.course});
+  final String title;
+  final String location;
+  final String unit;
+  final String time;
+  const ExpandWidget(
+      {super.key,
+      required this.course,
+      required this.title,
+      required this.location,
+      required this.unit,
+      required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +76,8 @@ class ExpandWidget extends StatelessWidget {
                               height: 0,
                             ),
                           ),
-                          const TextSpan(
-                            text: 'IPE 305',
+                          TextSpan(
+                            text: course,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -101,7 +112,7 @@ class ExpandWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
@@ -125,7 +136,7 @@ class ExpandWidget extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: ' Project management',
+                                text: title,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -162,11 +173,11 @@ class ExpandWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Lecturer',
+                                text: 'Venue',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 12,
@@ -186,7 +197,7 @@ class ExpandWidget extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'Dr Daramola',
+                                text: location,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -223,11 +234,11 @@ class ExpandWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Venue',
+                                text: 'Date and time',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 12,
@@ -247,7 +258,7 @@ class ExpandWidget extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: '1K Capacity',
+                                text: time,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -284,68 +295,7 @@ class ExpandWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Date and Time',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                ),
-                              ),
-                              TextSpan(
-                                text: ': ',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '8AM - 10AM, Monday',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w600,
-                                  height: 0,
-                                ),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: const ShapeDecoration(
-                            color: Color(0xFFFD00CC),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
@@ -369,7 +319,7 @@ class ExpandWidget extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: '2 units',
+                                text: unit,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -386,6 +336,7 @@ class ExpandWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -395,12 +346,12 @@ class ExpandWidget extends StatelessWidget {
               color: ColorStyles.primaryBlue,
               height: 48,
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const BottomNavBar(),
-                //   ),
-                // );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MaterialsPage(),
+                  ),
+                );
               },
               text: 'Download course materials',
               width: 343,

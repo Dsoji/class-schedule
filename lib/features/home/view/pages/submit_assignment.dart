@@ -91,27 +91,21 @@ class _SubmitAssignmentsState extends State<SubmitAssignments> {
                 text: widget.title,
               ),
               const Gap(24),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 120,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          width: 0.50,
-                          color: Colors.black.withOpacity(0.75),
-                        ),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 0.50,
+                        color: Colors.black.withOpacity(0.75),
                       ),
                     ),
                   ),
-                  const Gap(10),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
@@ -121,20 +115,15 @@ class _SubmitAssignmentsState extends State<SubmitAssignments> {
                           color: Color(0xFF055FE0),
                           shape: OvalBorder(),
                         ),
-                        child: const Text(
-                          '+',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                        child: const Center(
+                          child: Icon(
+                            Icons.add,
                             color: Colors.white,
-                            fontSize: 36,
-                            fontFamily: 'Source Sans Pro',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
+                            size: 24,
                           ),
                         ),
                       ),
                       const Gap(10),
-                      const SizedBox(height: 12),
                       const Text(
                         'Tap here and browse your file ',
                         textAlign: TextAlign.center,
@@ -148,7 +137,7 @@ class _SubmitAssignmentsState extends State<SubmitAssignments> {
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
               const Gap(24),
               Align(

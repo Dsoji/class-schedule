@@ -1,19 +1,29 @@
 // import 'package:class_scheduler/features/materials/widget/course_tile.dart';
 // ignore_for_file: deprecated_member_use
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduler/core/model/usermodel.dart';
+import 'package:scheduler/service/firestore.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 
 import '../../../core/const/const_barrel.dart';
 // import '../model/course_material_model.dart';
 
-class MaterialsPage extends StatelessWidget {
+class MaterialsPage extends StatefulWidget {
   const MaterialsPage({super.key});
 
   @override
+  State<MaterialsPage> createState() => _MaterialsPageState();
+}
+
+class _MaterialsPageState extends State<MaterialsPage> {
+  final MaterialService firestoreService = MaterialService();
+  @override
   Widget build(BuildContext context) {
+    String userDept = Provider.of<UserRoleProvider>(context).userDept;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -41,75 +51,53 @@ class MaterialsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Gap(20),
-            //   SizedBox(
-            //     height: 40,
-            //     width: double.infinity,
-            //     child: Row(
-            //       children: [
-            //         TextField(
-            //           autofocus: false,
-            //           style: const TextStyle(
-            //             fontSize: 10,
-            //             fontWeight: FontWeight.w700,
-            //             color: Colors.black,
-            //           ),
-            //           decoration: InputDecoration(
-            //             focusedBorder: OutlineInputBorder(
-            //               borderRadius: BorderRadius.circular(10.0),
-            //               borderSide: BorderSide(color: Colors.black),
-            //             ),
-            //             focusColor: Colors.white,
-            //             hintText: 'Search courses,assignment, lecturers ',
-            //             hintStyle: const TextStyle(
-            //               color: Color(0xFF757575),
-            //               fontSize: 14,
-            //               fontFamily: 'Source Sans Pro',
-            //               fontWeight: FontWeight.w400,
-            //               height: 0,
-            //             ),
-            //             contentPadding: const EdgeInsets.symmetric(
-            //                 vertical: 10, horizontal: 20),
-            //             border: OutlineInputBorder(
-            //               borderRadius: BorderRadius.circular(10.0),
-            //               borderSide: const BorderSide(color: Colors.grey),
-            //             ),
-            //             prefixIcon: IconButton(
-            //               onPressed: () {},
-            //               icon: const Icon(
-            //                 Icons.search,
-            //                 color: Colors.grey,
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //         Gap(8),
-            //         SizedBox(
-            //           child: Row(children: [
-            //             SvgPicture.asset(
-            //               SvgAssets.menu,
-            //               width: 14,
-            //               height: 14,
-            //               color: Colors.black,
-            //             ),
-            //             Text(
-            //               'Filter',
-            //               style: AppTextStyles.regular12
-            //                   .copyWith(color: Colors.black),
-            //             )
-            //           ]),
-            //         )
-            //       ],
-            //     ),
-            //   ),
-          ],
-        ),
+      body: SizedBox(
+        height: 550,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: firestoreService.getMaterialStream(userDept),
+            builder: (context, snapshot) {
+              //logic t get notes
+              if (snapshot.hasData) {
+                List notesList = snapshot.data!.docs;
+                //display as list
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: notesList.length,
+                  itemBuilder: (context, index) {
+                    //get each indv doc
+                    DocumentSnapshot document = notesList[index];
+                    String docID = document.id;
+
+                    //get note from each doc
+                    Map<String, dynamic> data =
+                        document.data() as Map<String, dynamic>;
+                    String titleText = data['name'];
+                    // String codeText = data['code'];
+                    // String theatreText = data['theatre'];
+                    // String unitText = data['unit'];
+                    // String detText = data['details'];
+
+                    //display as list tile
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: ListTile(
+                        leading: Image.asset(
+                          ImageAssets.pdf,
+                          width: 25.17,
+                          height: 20,
+                        ),
+                        title: Text(titleText),
+                        trailing: Icon(Icons.download, color: Colors.grey),
+                      ),
+                    );
+                  },
+                );
+              }
+              // if there exist to be no data
+              else {
+                return const Text("no classes");
+              }
+            }),
       ),
     );
   }

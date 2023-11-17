@@ -7,12 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:scheduler/core/model/usermodel.dart';
+import 'package:scheduler/core/widgets/erro_widget.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
 import 'package:scheduler/features/auth/register.dart';
 import 'package:scheduler/features/auth/reset_password.dart';
 import 'package:scheduler/features/bottomNavigation/bottom_navigation.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -219,13 +221,15 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void route() {
+  void route() async {
     User? user = FirebaseAuth.instance.currentUser;
+    var userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
     var kk = FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
         .get()
-        .then((DocumentSnapshot documentSnapshot) {
+        .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
         if (documentSnapshot.exists) {
           String userRole = documentSnapshot.get('rool');
@@ -234,14 +238,23 @@ class _LoginPageState extends State<LoginPage> {
           String userLevel = documentSnapshot.get('level');
           String userDept = documentSnapshot.get('dept');
 
+          // Store user information in SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('userName', userName);
+          prefs.setString('userRole', userRole);
+          prefs.setString('userEmail', userEmail);
+          prefs.setString('userLevel', userLevel);
+          prefs.setString('userDept', userDept);
+
           Provider.of<UserRoleProvider>(context, listen: false).setUserDetails(
             role: userRole, // Or set the role as needed
             name: userName,
             email: userEmail,
             level: userLevel,
             dept: userDept,
+            docId: userDocRef.id,
           );
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const BottomNavBar()),
           );
@@ -251,6 +264,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signIn(String email, String password) async {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: const CircularProgressIndicator(
+          color: Colors.blue,
+        ),
+      ),
+    );
+
     if (_formkey.currentState!.validate()) {
       try {
         UserCredential userCredential =
@@ -261,7 +283,10 @@ class _LoginPageState extends State<LoginPage> {
         route();
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-        } else if (e.code == 'wrong-password') {}
+          displayMessage("User not found", context);
+        } else if (e.code == 'wrong-password') {
+          displayMessage("Error: check details and try again", context);
+        }
       }
     }
   }

@@ -47,7 +47,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.bookmark_added,
+              Icons.menu_book,
               color: Colors.black,
             ),
             label: 'Materials',

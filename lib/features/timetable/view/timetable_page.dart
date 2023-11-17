@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/features/timetable/pages/second_semester.dart';
+import 'package:scheduler/features/timetable/pages/first_semester.dart';
 
 import '../../../core/const/const_barrel.dart';
 import '../../../core/widgets/widget_barrel.dart';
@@ -50,7 +51,13 @@ class TimetablePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ContainerWidget2(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FirstSemester()),
+                  );
+                },
                 title: '1st Semester',
 
                 svg: SvgAssets.cal,

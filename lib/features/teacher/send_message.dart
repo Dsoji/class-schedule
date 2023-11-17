@@ -1,18 +1,65 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/model/usermodel.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
+import 'package:scheduler/service/firestore.dart';
 
-class SendMessage extends StatelessWidget {
+class SendMessage extends StatefulWidget {
   const SendMessage({super.key});
 
   @override
+  State<SendMessage> createState() => _SendMessageState();
+}
+
+class _SendMessageState extends State<SendMessage> {
+  //firestore
+  final NotificationService firestoreService = NotificationService();
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController msgController = TextEditingController();
+  final TextEditingController codeController = TextEditingController();
+
+  var _deptItemSelected = "CVE";
+
+  var dept = "Department";
+
+  var depts = [
+    'CVE',
+    'EEE',
+    'MEE',
+    'AGE',
+    'MME',
+    'MNE',
+    'IPE',
+  ];
+
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String userDept = Provider.of<UserRoleProvider>(context).userDept;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -45,11 +92,28 @@ class SendMessage extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Gap(36),
+              const Gap(56),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Course Code',
+                  style: AppTextStyles.regular12.copyWith(color: Colors.black),
+                ),
+              ),
+              const Gap(6),
+              FormBuilderTextField(
+                name: 'Course Code',
+                controller: codeController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const Gap(24),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -60,46 +124,10 @@ class SendMessage extends StatelessWidget {
               const Gap(6),
               FormBuilderTextField(
                 name: 'Course Title',
+                controller: titleController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                ),
-              ),
-              const Gap(24),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Department',
-                  style: AppTextStyles.regular12.copyWith(color: Colors.black),
-                ),
-              ),
-              const Gap(6),
-              DropdownButtonHideUnderline(
-                child: FormBuilderDropdown(
-                  decoration: const InputDecoration(
-                    // labelText: 'Service Type',
-                    hintText: 'Department',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                  name: 'Department',
-                  isExpanded: true,
-                  items: [
-                    "IPE",
-                    "AGE",
-                    "MEE",
-                    "CVE",
-                    "EEE",
-                    "CPE",
-                  ].map((option) {
-                    return DropdownMenuItem(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
                 ),
               ),
               const Gap(24),
@@ -114,9 +142,10 @@ class SendMessage extends StatelessWidget {
               FormBuilderTextField(
                 name: 'Send Message',
                 maxLines: 5,
+                controller: msgController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  hintText: 'Name of materials',
+                  hintText: "What's the message?",
                   hintStyle: TextStyle(
                     color: Color(0xBF212121),
                     fontWeight: FontWeight.bold,
@@ -124,67 +153,35 @@ class SendMessage extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const Gap(24),
-              Container(
-                width: double.infinity,
-                height: 120,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 0.50,
-                      color: Colors.black.withOpacity(0.75),
-                    ),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const ShapeDecoration(
-                        color: Color(0xFF055FE0),
-                        shape: OvalBorder(),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    const Gap(10),
-                    const Text(
-                      'Tap here and browse your file ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF7A7A7A),
-                        fontSize: 12,
-                        fontFamily: 'Source Sans Pro',
-                        fontWeight: FontWeight.w600,
-                        height: 0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Gap(24),
+              const Gap(104),
               Center(
                 child: FullButton(
                   color: ColorStyles.primaryBlue,
                   height: 48,
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const BottomNavBar(),
-                    //   ),
-                    // );
+                    // adding new note
+                    firestoreService.addMsg(
+                      userDept,
+                      codeController.text,
+                      titleController.text,
+                      msgController.text,
+                    );
+
+                    //clear the text controller
+                    titleController.clear();
+                    msgController.clear();
+                    //close boxx
+                    Navigator.pop(context);
                   },
-                  text: 'Upload Materials',
+                  text: 'Upload Message',
                   width: 343,
+                ),
+              ),
+              const Gap(12),
+              const Center(
+                child: Text(
+                  'Note: once text clears in the fields means uploading is completed',
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ],

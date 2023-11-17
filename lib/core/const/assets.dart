@@ -29,6 +29,8 @@ class ImageAssets {
   static const upldA = '$_base/upld.png';
   static const send = '$_base/send.png';
   static const pswrd = '$_base/pswrd.png';
+  static const doc = '$_base/doc.png';
+
 }
 
 class SvgAssets {

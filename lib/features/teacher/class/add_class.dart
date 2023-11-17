@@ -5,7 +5,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/model/usermodel.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
 import 'package:scheduler/service/add_class.dart';
 
@@ -90,6 +92,7 @@ class _AddClassState extends State<AddClass> {
 
   @override
   Widget build(BuildContext context) {
+    String userDept = Provider.of<UserRoleProvider>(context).userDept;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -370,6 +373,7 @@ class _AddClassState extends State<AddClass> {
                 onPressed: () {
                   //adding new note
                   firestoreService.addClass(
+                      userDept,
                       titleController.text,
                       codeController.text,
                       theatreController.text,
