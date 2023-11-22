@@ -31,24 +31,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
-              child: InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: Text(
-                  'SKIP',
-                  style: AppTextStyles.regular16.copyWith(color: Colors.black),
-                ),
+              child: Text(
+                'SKIP',
+                style: AppTextStyles.regular16
+                    .copyWith(color: Colors.black, fontSize: 24),
               ),
             ),
           ),

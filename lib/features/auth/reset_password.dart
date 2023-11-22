@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/core/const/const_barrel.dart';
+import 'package:scheduler/core/widgets/erro_widget.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
+import 'package:scheduler/features/auth/login.dart';
 
 class ReetPassword extends StatefulWidget {
   const ReetPassword({super.key});
@@ -43,7 +48,7 @@ class _ReetPasswordState extends State<ReetPassword> {
             const SizedBox(
               width: 296,
               child: Text(
-                'Enter your phone number and we will send you instructions to reset your password.',
+                'Enter your email and we will send you instructions to reset your password.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0xFF1A171B),
@@ -61,19 +66,39 @@ class _ReetPasswordState extends State<ReetPassword> {
               ),
             ),
             const Gap(6),
-            ReusedField(
-              height: 38,
-              width: double.infinity,
+            FormBuilderTextField(
+              name: 'Email',
               controller: emailController,
-              color: Colors.black,
-              autofocus: true,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: 'Email address',
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Email cannot be empty";
+                }
+                if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                    .hasMatch(value)) {
+                  return ("Please enter a valid email");
+                } else {
+                  return null;
+                }
+              },
+              onSaved: (value) {
+                emailController.text = value!;
+              },
             ),
             const Gap(42),
             Center(
               child: FullButton(
                 color: ColorStyles.primaryBlue,
                 height: 48,
-                onPressed: () {},
+                onPressed: rstPswrd,
                 text: 'Continue',
                 width: 343,
               ),
@@ -94,9 +119,9 @@ class _ReetPasswordState extends State<ReetPassword> {
                       ..onTap = () {
                         Navigator.pop(
                           context,
-                          // MaterialPageRoute(
-                          //   builder: (context) => const SignUpScreen(),
-                          // ),
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
                         );
                       },
                   ),
@@ -107,5 +132,26 @@ class _ReetPasswordState extends State<ReetPassword> {
         ),
       ),
     );
+  }
+
+  Future rstPswrd() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: emailController.text);
+      // displayMessage(
+      //     "Password reset email sent successfully!, check your mail", context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Password reset email sent successfully!, check your mail'),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      // Handle errors if the password reset email cannot be sent
+      print('Error sending password reset email: $e');
+      displayMessage("Reset link not sent, please try again", context);
+    }
   }
 }

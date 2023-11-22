@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:scheduler/core/widgets/widget_barrel.dart';
 import 'package:scheduler/features/auth/login.dart';
-import 'package:scheduler/features/auth/reset_password.dart';
 import 'package:scheduler/features/bottomNavigation/bottom_pages_brrel.dart';
 import 'package:scheduler/features/home/view/pages/assignment.dart';
 import 'package:scheduler/features/profile/view/pages/edit_profile.dart';
@@ -132,6 +131,150 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const Gap(25),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Student',
+                    child: ProfileTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyCourse()),
+                        );
+                      },
+                      title: 'My courses',
+                      svg: SvgAssets.book,
+                      color: const Color.fromRGBO(198, 72, 242, 1),
+                    ),
+                  ),
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Teacher',
+                    child: ProfileTile2(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ViewClass()),
+                        );
+                      },
+                      title: 'View Class',
+                      svg: ImageAssets.view,
+                    ),
+                  ),
+                  const Gap(16),
+                  ProfileTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UpdateTimetable()),
+                      );
+                    },
+                    title: 'Update Timetable',
+                    svg: SvgAssets.book,
+                    color: const Color.fromRGBO(198, 72, 242, 1),
+                  ),
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Student',
+                    child: ProfileTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const TimetablePage()),
+                          );
+                        },
+                        title: 'Class schedule',
+                        svg: SvgAssets.cal,
+                        color: const Color.fromRGBO(5, 95, 224, 1)),
+                  ),
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Teacher',
+                    child: ProfileTile2(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UploadMaterial()),
+                        );
+                      },
+                      title: 'Upload Material',
+                      svg: ImageAssets.upldM,
+                    ),
+                  ),
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Student',
+                    child: ProfileTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const NotificationPage()),
+                        );
+                      },
+                      title: 'Notifications',
+                      svg: SvgAssets.bell,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Teacher',
+                    child: ProfileTile2(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UploadAssignment()),
+                        );
+                      },
+                      title: 'Upload Assignment',
+                      svg: ImageAssets.upldA,
+                    ),
+                  ),
+                  const Gap(16),
+                  // if (userDetails['userRole'] == 'Student')
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Student',
+                    child: ProfileTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AssignmentsPage()),
+                        );
+                      },
+                      title: 'Assignment',
+                      svg: SvgAssets.ass,
+                      color: const Color.fromRGBO(5, 224, 145, 1),
+                    ),
+                  ),
+
+                  const Gap(16),
+
+                  Visibility(
+                    visible: userDetails['userRole'] == 'Teacher',
+                    child: ProfileTile2(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SendMessage()),
+                        );
+                      },
+                      title: 'Send Message',
+                      svg: ImageAssets.send,
+                    ),
+                  ),
                   //teacher
                   Visibility(
                     visible: userDetails['userRole'] == 'Teacher',
@@ -252,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //rep
                   Visibility(
-                    visible: userDetails['userRole'] == 'Rep',
+                    visible: userDetails['userRole'] == 'Student',
                     child: Column(
                       children: [
                         ProfileTile(
@@ -374,20 +517,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
-                  const Gap(16),
-                  //password
                   ProfileTile(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ReetPassword()),
+                            builder: (context) => const ResetPassword()),
                       );
                     },
                     title: 'Change Password',
                     svg: SvgAssets.pswrd,
                     color: const Color.fromRGBO(255, 0, 92, 1),
                   ),
+                  const Gap(16),
 
                   const Gap(48.86),
                   //logout button
@@ -419,8 +561,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-                  ),
-                  Gap(20),
+                  )
                 ],
               ),
             );

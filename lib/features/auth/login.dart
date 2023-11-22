@@ -192,6 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                               text: ' Sign up',
                               style: AppTextStyles.regular12.copyWith(
+                                fontSize: 16,
                                 color: Colors.red,
                               ),
                               recognizer: TapGestureRecognizer()
@@ -286,6 +287,8 @@ class _LoginPageState extends State<LoginPage> {
           displayMessage("User not found", context);
         } else if (e.code == 'wrong-password') {
           displayMessage("Error: check details and try again", context);
+        } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+          displayMessage('Wrong login credentials, please try again', context);
         }
       }
     }

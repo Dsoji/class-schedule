@@ -41,6 +41,7 @@ class _RegisterState extends State<Register> {
   var options = [
     'Student',
     'Teacher',
+    'Rep',
   ];
   var levels = [
     "100",
