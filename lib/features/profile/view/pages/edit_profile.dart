@@ -258,6 +258,14 @@ class _EditProfileState extends State<EditProfile> {
                     width: 343,
                   ),
                 ),
+                Gap(12),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Note: Changes takes place in next login',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ],
             ),
           ),

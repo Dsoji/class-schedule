@@ -107,11 +107,11 @@ class _SecondSemesterState extends State<SecondSemester> {
                         //display as list tile
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
-                          child: ListTile(
-                            leading: Text(titleText),
-                            subtitle: Text(location),
-                            title: Text(dateTime),
-                            trailing: Icon(Icons.download, color: Colors.grey),
+                          child: TimeWidget(
+                            course: titleText,
+                            location: location,
+                            time: dateTime,
+                            date: dateTime,
                           ),
                         );
                       },
